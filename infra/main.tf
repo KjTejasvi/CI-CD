@@ -151,7 +151,7 @@ resource "aws_eks_node_group" "eks_cluster" {
         min_size = 3
     }
 
-    instance_types = ["t2.large"]
+    instance_types = ["m7i-flex.large"]
     remote_access {
         ec2_ssh_key = var.ec2_ssh_key_name
         source_security_group_ids = [aws_security_group.eks_node_sg.id]
