@@ -98,7 +98,7 @@ resource "aws_iam_role" "eks_iam_cluster_role" {
 }
 resource "aws_iam_role_policy_attachment" "eks_cluster_role_policy" {
     role = aws_iam_role.eks_iam_cluster_role.name
-    policy_arn = "arn:aws:iam::aws/policy/AmazonEKSClusterPolicy"
+    policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
 }
 #iam roles and policies-node
 resource "aws_iam_role" "eks_iam_node_role" {
@@ -120,15 +120,15 @@ resource "aws_iam_role" "eks_iam_node_role" {
 }
 resource "aws_iam_role_policy_attachment" "eks_node_role_policy" {
     role = aws_iam_role.eks_iam_node_role.name
-    policy_arn = "arn:aws:iam::aws/policy/AmazonEKSWorkerNodePolicy"
+    policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
 }
 resource  "aws_iam_role_policy_attachment" "eks_node_group_cni_policy" {
     role = aws_iam_role.eks_iam_node_role.name
-    policy_arn = "arn:aws:iam::aws/policy/AmazonEKS_CNI_Policy"
+    policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 }
 resource  "aws_iam_role_policy_attachment" "eks_node_group_registry_policy" {
     role = aws_iam_role.eks_iam_node_role.name
-    policy_arn = "arn:aws:iam::aws/policy/AmazonEC2ContainerRegistryReadOnly"
+    policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 #eks cluster
 resource "aws_eks_cluster" "eks_cluster" {
