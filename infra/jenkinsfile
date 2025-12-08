@@ -12,7 +12,7 @@ pipeline {
 
     stages {
         stage('Checkout') {
-             scripts {
+             script {
                  dir ('terraform')
                  git url: 'https://github.com/KjTejasvi/CI-CD.git', branch: 'project1'
             }
