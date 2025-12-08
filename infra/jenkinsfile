@@ -27,8 +27,9 @@ pipeline {
             }
         }
         stage('Apply or Destroy') {
-            expression {
-                params.terraformAction == 'apply' || params.terraformAction == 'destroy'
+            when {
+                expression {
+                return params.terraformAction == 'apply' || params.terraformAction == 'destroy'
             }
             steps {
                 script {
