@@ -1,0 +1,43 @@
+pipeline {
+    parameters {
+        choice(name: 'terraformAction', choices: ['apply', 'destroy'], description: 'choose your terraform action')
+    }
+
+    environment {
+        AWS_ACCESS_KEY_ID = credentials('aws-access-key-id')
+        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
+    }
+
+    agent any
+
+    stages {
+        stage('Checkout') {
+             scripts {
+                 dir ('terraform')
+                 git url: 'https://github.com/KjTejasvi/CI-CD.git', branch: 'project1'
+            }
+        }
+        stage('terraform plan') {
+            steps {
+                sh 'pwd; cd infra/ ; terraform init '
+                sh 'pwd; cd infra/ ; terraform plan -out=tfplan -input=false'
+                sh 'pwd; cd infra/ ; terraform show -no-color tfplan > tfplan.txt'
+            }
+        }
+        stage('Apply or Destroy') {
+            expression {
+                params.terraformAction == 'apply' || params.terraformAction == 'destroy'
+            }
+            steps {
+                script {
+                    if(params.terraforAction == 'apply') {
+                        sh 'pwd; cd infra/ ; terraform apply -input=false tfplan'
+                    }
+                    else if(params.terraformAction == 'destroy') {
+                        sh 'pwd; cd infra/ ; terraform destroy -auto-approve'
+                    }
+                }
+            }
+        }
+    }
+}
