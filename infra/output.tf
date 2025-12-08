@@ -4,7 +4,7 @@ output "Cluster_ID" {
 }
 output "node_group_name" {
     description = "The name of the created node group"
-    value       = aws_eks_node_group.eks_cluster.id
+    value       = aws_eks_node_group.eks_node_group.id
 }
 output "vpc_id" {
     description = "The ID of the created VPC"
