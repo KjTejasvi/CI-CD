@@ -1,46 +1,55 @@
 pipeline {
     parameters {
-        choice(name: 'terraformAction', choices: ['apply', 'destroy'], description: 'choose your terraform action')
+        choice(name: 'terraformAction', choices: ['apply', 'destroy'], description: 'Choose your Terraform action')
     }
 
     environment {
-        AWS_ACCESS_KEY_ID = credentials('aws-access-key-id')
+        AWS_ACCESS_KEY_ID     = credentials('aws-access-key-id')
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
     }
 
     agent any
 
     stages {
+        
         stage('Checkout') {
             steps {
-                script {
-                    dir ('terraform')
+                dir('terraform') {
                     git url: 'https://github.com/KjTejasvi/CI-CD.git', branch: 'project1'
                 }
             }
         }
-        stage('terraform plan') {
+
+        stage('Terraform Plan') {
             steps {
-                sh 'pwd; cd infra/ ; terraform init '
-                sh 'pwd; cd infra/ ; terraform plan -out=tfplan -input=false'
-                sh 'pwd; cd infra/ ; terraform show -no-color tfplan > tfplan.txt'
+                dir('terraform/infra') {
+                    sh 'terraform init'
+                    sh 'terraform plan -out=tfplan -input=false'
+                    sh 'terraform show -no-color tfplan > tfplan.txt'
+                }
             }
         }
+
         stage('Apply or Destroy') {
             when {
                 expression {
-                return params.terraformAction == 'apply' || params.terraformAction == 'destroy'
+                    params.terraformAction == 'apply' || params.terraformAction == 'destroy'
+                }
             }
             steps {
                 script {
-                    if(params.terraforAction == 'apply') {
-                        sh 'pwd; cd infra/ ; terraform apply -input=false tfplan'
-                    }
-                    else if(params.terraformAction == 'destroy') {
-                        sh 'pwd; cd infra/ ; terraform destroy -auto-approve'
+                    if (params.terraformAction == 'apply') {
+                        dir('terraform/infra') {
+                            sh 'terraform apply -input=false tfplan'
+                        }
+                    } else if (params.terraformAction == 'destroy') {
+                        dir('terraform/infra') {
+                            sh 'terraform destroy -auto-approve'
+                        }
                     }
                 }
             }
         }
+
     }
 }
