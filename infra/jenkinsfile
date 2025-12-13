@@ -30,6 +30,16 @@ pipeline {
             }
         }
 
+        stage('Approval'){
+            steps {
+                script {
+                    parameters {
+                        input message: 'Do you want to proceed with the Terraform action?', ok: 'Yes', submitter: 'admin'
+                    }
+                }
+            }
+        }
+
         stage('Apply or Destroy') {
             when {
                 expression {
@@ -48,6 +58,14 @@ pipeline {
                         }
                     }
                 }
+            }
+        }
+
+        stage('s3 backup'){
+            steps {
+                sh '''
+                   aws s3 cp terraform.tfstate s3://my-terraform-backup-bucket/ --region ap-south-1
+                '''
             }
         }
 
